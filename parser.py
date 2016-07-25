@@ -5,7 +5,7 @@ import datetime
 from urllib2 import urlopen, Request
 from config import *
 import lxml.html.soupparser as soupparser
-from driver import to_file
+from driver import to_rss
 #from pprint import pprint
 
 
@@ -22,6 +22,8 @@ def parse(conf):
 
         for item in items:
             result.append(conf['parse_func'](item.getchildren()))
+        if 'mock' in conf.keys():
+            result.insert(0, conf['mock'])
         return result
     except Exception , e:
         raise e
@@ -32,7 +34,8 @@ def refresh(conf):
     """
     try:
         item_list = parse(conf)
-        to_file(item_list, conf)
+        #to_file(item_list, conf)
+        to_rss(item_list, conf)
     except Exception , e:
         raise e
 

@@ -2,10 +2,10 @@
 #coding=utf-8
 #Filename:config.py
 import re
-seg=u"\t\t"
-def innertext(element):
-    """"""
-    return ''.join([text for text in element.itertext()])
+seg=u"\t"
+#def innertext(element):
+    #""""""
+    #return ''.join([text for text in element.itertext()])
 def clean(text):
     """"""
     return re.sub('[\t\ \n\r]','',text)
@@ -24,28 +24,49 @@ common_conf = {
 
 smzdm_conf = dict(common_conf, **{
     'xpath': '//div[@class="list list_preferential "]',
-    'file_template':u"%(title)s" + seg + u"%(url)s" + seg + u"%(pic)s"+ seg + u"%(content)s" + seg + u"%(direct_url)s\n",
+    'file_template':u"%(title)s" + seg + u"%(url)s" + seg + u"%(pic)s"+ seg + u"%(content)s" + seg + u"%(date)s" + seg + u"%(direct_url)s\n",
     'parse_func':lambda item : {
-        'title':innertext(item[0].getchildren()[0]),
+        'title':item[0].getchildren()[0].text_content(),
         'url': item[1].attrib['href'],
         'pic': item[1].getchildren()[0].attrib['src'],
-        'content': clean(item[2].getchildren()[1].text),
-        'direct_url': item[2].xpath(".//div[@class='buy']/a")[0].attrib['href']
+        'content': clean(item[2].getchildren()[1].text_content()),
+        'direct_url': item[2].xpath(".//div[@class='buy']/a")[0].attrib['href'],
+        'date': item[2].getchildren()[0].getchildren()[0].text,
     },
+    'file_path':'/usr/share/nginx/html/',
+    #'mock': {
+        #'title':'mock',
+        #'url': 'http://cxh.me',
+        #'pic': 'http://cxh.me',
+        #'content': 'mock item',
+        #'direct_url': 'http://cxh.me',
+        #'date': '12:34'
+    #},
 })
 
 smzdm_shenjiage_conf = dict(smzdm_conf, **{
     'url' : 'http://www.smzdm.com/tag/%E7%A5%9E%E4%BB%B7%E6%A0%BC',
-    #'filename':'/usr/local/nginx/html/shenjiage.xml'
-    'filename':'shenjiage.xml'
+    'filename':'shenjiage.xml',
+    'title' : u"神价格",
+    'description' : u"神价格",
+    'link' : "http://182.92.76.83/shenjiage.xml",
+    'rss_name':'shenjiage.xml',
 })
 
 smzdm_baicaidang_conf = dict(smzdm_conf , **{
     'url' : 'http://www.smzdm.com/tag/%E7%99%BD%E8%8F%9C%E5%85%9A',
-    'filename':'baicaidang.xml'
+    'filename':'baicaidang.xml',
+    'title' : u"白菜党",
+    'link' : "http://182.92.76.83/baicaidang.xml",
+    'description' : u"白菜党",
+    'rss_name':'baicaidang.xml',
 })
 
 smzdm_shoumanwu_conf = dict(smzdm_conf , **{
     'url' : 'http://www.smzdm.com/tag/%E6%89%8B%E6%85%A2%E6%97%A0',
-    'filename':'shoumanwu.xml'
+    'filename':'shoumanwu.xml',
+    'title' : u"手慢无",
+    'link' : "http://182.92.76.83/shoumanwu.xml",
+    'description' : u"手慢无",
+    'rss_name':'shoumanwu.xml',
 })
